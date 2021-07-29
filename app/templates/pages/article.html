@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+
+{% from './macros/_article.html' import article_card_small with context %}
+{% from './macros/_lessons.html' import lesson_card with context %}
+
+{% block head %}
+    <title>{{ article.title }}</title>
+{% endblock head %}
+
+
+{% block content %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {{ view_error_messages(messages) }}
+        {% endif %}
+    {% endwith %}
+    
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col">
+                <div class="article-top">
+                    <div class="article-title">
+                        <h1 class="font-weight-light">{{ article.title }}</h1>
+                        <div class="article-details mb-3">
+                            <span><i class="bi-clipboard mr-1"></i>{{ article.author }}</span>
+                            <span><i class="bi-calendar ml-1 mr-1"></i>{{ article.date_posted.strftime('%d/%m/%Y %H:%M') }}</span>
+                        </div>
+                    </div>
+                    <div class="article-subtitle text-justify">
+                        <p>{{ article.summary }}</p>
+                    </div>
+                    {% if article.topic %}
+                        <div class="article-topic">
+                            <p class="lead">Topic: <span class="badge badge-secondary">{{ article.topic }}</span></p>
+                        </div>
+                    {% endif %}
+                    
+                </div>
+                <div class="article-content text-justify">
+                    {{ article_json["html"]|safe }}
+                </div>
+
+            </div>
+
+            <div class="col-lg-3 similar-articles">
+                {% if similar_articles %}
+                    <h4 class="text-center font-weight-normal mb-4">Similar articles</h4>
+                    {% for similar_article in similar_articles %}
+                        {{ article_card_small(similar_article, "card-hover mb-4") }}
+                    {% endfor %}
+                {% else %}
+                    <h4 class="text-center font-weight-normal">No similar articles found.</h4>
+                {% endif %}
+            </div>
+ 
+        </div>
+        {% if related_lessons %}
+            <div class="row">
+                <div class="container related-lessons">
+                    <h3 class="font-weight-normal">
+                        Related lessons
+                    </h3>
+                    <div class="d-flex flex-wrap" style="gap: 1rem; margin-top:2.5rem">
+                        {% for lesson in related_lessons %}
+                            {{ lesson_card(lesson, "card-hover", "width: 17.5rem")}}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+    </div>
+
+{% endblock content %}
+
+<!-- {{ article_json["html"]|safe }}
+<p><a href="#" onclick="window.history.back()">Go back</a></p> -->

@@ -1,0 +1,78 @@
+
+{% macro lesson_card(lesson, class, style) %}
+    <div class="card {{ class|safe if class }}" style="{{ style|safe if style }}">
+        <div class="card-body">
+            <h5 class="card-title">{{ lesson.title }}</h5>
+            <p class="card-subtitle mb-2 text-muted">
+                <span class='badge badge-secondary'>{{ lesson.topic }}</span>
+                <span class="badge badge-secondary">id: {{ lesson.id }}</span>
+            </p>
+            <p class="card-text">{{ lesson.summary }}</p>
+        </div>
+        <div class="card-footer">
+            {% if current_user.is_authenticated and "progress" in session %}
+                {% if session["progress"].lessons[lesson.id|string] %}
+                    {% set progress=session["progress"].lessons[lesson.id|string] %}
+                    {% if progress["complete"] %}
+                        <p class="card-text d-flex align-items-center justify-content-between">
+                            Complete! ✅
+                            <a class="btn btn-primary stretched-link float-right" href="{{ url_for('lessons.lesson', lesson_id=lesson.id) }}" role="button">View</a>
+                        </p>
+                    {% else %}
+                        {{ lesson_progress(lesson.id|string, false, false, "mb-2", "") }}
+                        <p class="card-text d-flex align-items-center justify-content-between">
+                            Incomplete! ❌
+                            <a class="btn btn-primary stretched-link float-right" href="{{ url_for('lessons.lesson', lesson_id=lesson.id) }}" role="button">Continue</a>
+                        </p>
+                    {% endif %}
+                {% else %}
+                    <p class="card-text d-flex align-items-center justify-content-between">
+                        Not attempted!
+                        <a class="btn btn-primary stretched-link float-right" href="{{ url_for('lessons.lesson', lesson_id=lesson.id) }}" role="button">View</a>
+                    </p>
+                {% endif %}
+            {% else %}
+                <p class="card-text d-flex align-items-center justify-content-between">
+                    Not attempted!
+                    <a class="btn btn-primary stretched-link" href="{{ url_for('lessons.lesson', lesson_id=lesson.id) }}" role="button">View</a>
+                </p>
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro lesson_progress(lesson_id, title, href_title, class, style) %}
+    {% if session["progress"] %}
+        {% set lesson=session["progress"].lessons[lesson_id] %}
+        {% set correct = session["progress"].lessons[lesson_id].lessons_correct %}
+        
+        {% set total_questions=session["progress"].lessons[lesson_id].total_questions %}
+        {% if total_questions <= 0 %}
+            {% set total_questions = 1 %}
+        {% endif %}
+        
+        {% set completed = session["progress"].lessons[lesson_id].complete %}
+        {% set lesson_title = session["progress"].lessons[lesson_id].title %}
+
+        {% if title %}
+            {% if href_title %}
+                <h6 class="font-weight-normal mt-4"><a href=" {{ url_for('lessons.lesson', lesson_id=lesson_id) }}" style="color: inherit"><u>{{ lesson_title }}</u></a></h6>
+            {% else %}
+                <h6 class="font-weight-normal mt-4">{{ lesson_title }}</h6>
+            {% endif %}
+        {% endif %}
+
+        {% if completed %}
+            <div class="progress {{ class|safe if class }}" style="{{ style|safe if style }}">
+                <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 100%; background-color: green;">Complete! ✅</div>
+            </div>
+        {% else %}
+            {% set width=100/total_questions %}
+            {% set result=width*correct %}
+            <div class="progress {{ class|safe if class }}" style="{{ style|safe if style }}">
+                <div class="progress-bar progress-bar-striped" role="progressbar" style="width: {{ result }}%">{{ result|int }}%</div>
+            </div>
+        {% endif %}
+    {% endif %}
+
+{% endmacro %}

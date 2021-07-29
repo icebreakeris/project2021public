@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% from "./macros/_article.html" import article_card with context %}
+
+{% block head %}
+    <title>News</title>
+{% endblock head %}
+
+
+{% block content %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {{ view_error_messages(messages) }}
+        {% endif %}
+    {% endwith %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1 class="mt-4 mb-4 font-weight-light">News</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-9">
+                {% if articles %}
+                    {% for article in articles %}
+                        <div class="mb-4">
+                            {{ article_card(article) }}
+                        </div>
+                    {% endfor %}
+                    <ul class="mt-4 pagination custom-pagination justify-content-center">
+                        <li class="page-item {{ 'disabled' if page_num - 1 <= 0 }}">
+                            <a class="page-link" href="{{ url_for('news.news', page_num=page_num-1 ) }}">Previous</a>
+                        </li>
+                        <li class="page-item disabled">
+                            <span class="page-link">{{ page_num }}</span>
+                        </li>
+                        <li class="page-item disabled">
+                            <span class="page-link">{{ count }}</span>
+                        </li>
+                        <li class="page-item {{ 'disabled' if page_num == count }}">
+                            <a class="page-link" href="{{ url_for('news.news', page_num=page_num+1 ) }}">Next</a>
+                        </li>
+                    </ul>
+                {% else %}
+                    <h3 class="font-weight-light">No articles found. This could be because there are none in the database!</h3>
+                {% endif %}
+            </div>
+            <div class="col">
+                {% if topic_form %}
+                    <div class="article-topics card sticky-top">
+                        <form method="POST" action="/news/">
+                            <div class="card-body">
+                                <h4 class="card-title font-weight-light">News topics</h4>
+                                    {{ topic_form.csrf_token }}
+                                    {% for checkbox in topic_form.checkboxes %}
+                                        <div class="form-check mb-2">
+                                            {{ checkbox(class="form-check-input", checked=checkbox.label.text in session["preferred_topics"]) }}
+                                            {{ checkbox.label(class="form-check-label") }}
+                                        </div>
+                                    {% endfor %}
+                            </div>
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary" style="width: 100%">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+            
+        </div>
+        
+    </div>
+{% endblock content %}

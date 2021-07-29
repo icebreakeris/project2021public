@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% from './macros/_article.html' import article_card with context %}
+{% from './macros/_lessons.html' import lesson_card with context %}
+
+{% block head %}
+    <title>Search Results</title>
+{% endblock head %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1 class="mb-4 mt-4 font-weight-light">Search results</h1>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="custom-accordion rounded shadow" id="article-accordion">
+                {% if articles %}
+                    <div class="card-header">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-articles" aria-expanded="true" aria-controls="collapse-articles">
+                            Articles found: {{ articles|length }}
+                        </button>
+                    </div>
+                    <div id="collapse-articles" class="collapse" aria-labelledby="heading-articles" data-parent="#article-accordion">
+                        <div class="card-body lesson-container">
+                            {% for article in articles %}
+                                {{ article_card(article, "mb-4", "width: 100%") }}
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="card-header">
+                        No articles found.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="custom-accordion rounded shadow" id="lesson-accordion">
+                {% if lessons %}
+                    <div class="card-header">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-lessons" aria-expanded="true" aria-controls="collapse-lessons">
+                            Lessons found: {{ lessons|length }}
+                        </button>
+                    </div>
+                    <div id="collapse-lessons" class="collapse" aria-labelledby="heading-lessons" data-parent="#lesson-accordion">
+                        <div class="card-body lesson-container">
+                            {% for lesson in lessons %}
+                                {{ lesson_card(lesson, "mb-4", "width: 100%") }}
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="card-header">
+                        No lessons found.
+                    </div>
+                {% endif %}
+            </div>
+        </div>        
+    </div>
+{% endblock content %}

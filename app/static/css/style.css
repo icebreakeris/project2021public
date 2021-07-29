@@ -1,0 +1,356 @@
+:root{
+    --main-color: rgb(46, 31, 83);
+    --main-color-ligher: rgb(56, 37, 105);
+    --main-color-transparent:rgba(46, 31, 83, 0.712);
+    --main-hover-color: rgb(102, 87, 141);
+    --card-hover-zoom: 1.035;
+}
+
+
+html{
+    scroll-behavior: smooth;
+}
+
+body{
+    background-image: linear-gradient( 50deg , #23173e, #922828b3);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: white;
+    min-height: 100%!important;
+}
+
+.badge-secondary{
+    font-weight: 500;
+}
+
+.border-bottom{
+    border-color: var(--main-color)!important;
+}
+
+.border-top{ 
+    border-color: var(--main-color)!important;
+}
+
+.border-left{
+    border-color: var(--main-color)!important;
+}
+
+.border-right{
+    border-color: var(--main-color)!important;
+}
+
+.btn-primary{
+    background-color: var(--main-color);
+}
+
+.btn-primary:hover{
+    background-color: var(--main-hover-color);
+}
+
+.question-answer{
+    display: none;
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: var(--main-color-transparent);
+}
+
+.custom-accordion{
+    width: 100%;
+    background-color:  var(--main-color-transparent);
+}
+
+.footer-list-group .list-group-item{
+    background-color: var(--main-color-transparent);
+    transition: 0.2s all ease-in-out;
+    border: none;
+}
+
+.footer-list-group .list-group-item a{
+    color: inherit;
+}
+
+.footer-list-group .list-group-item:hover{
+    background-color: var(--main-hover-color);
+}
+
+.custom-accordion .btn-link{
+    color: white!important;
+}
+.lesson-container{
+    max-height: 40rem;
+    width: 100%;
+    overflow-y: scroll; 
+    overflow-x: hidden;
+}
+
+.lesson-container::-webkit-scrollbar{
+    display:none;
+}
+
+.badges-preview{
+    padding: 3rem;
+    gap: 10px;
+}
+
+.badges-preview img{
+    max-height: 150px;
+    max-width: 150px;
+}
+
+.page-intro .jumbotron{
+    padding: 12rem 0!important;
+    margin-bottom: 7rem;
+}
+
+.page-intro .jumbotron .container{
+    background-color:var(--main-color-transparent);
+    padding: 3rem;
+    border-radius: 10px;
+}
+
+.page-intro .jumbotron .lead{
+    font-weight: normal;
+}
+
+.background-1{
+    background: url("/static/img/cybersec.png") no-repeat fixed center center/cover; 
+}
+
+.background-2{
+    background: url("/static/img/cybersec2.jpg") no-repeat fixed center center/cover; 
+}
+
+.background-3{
+    background: url("/static/img/cybersec3.jpg") no-repeat fixed center center/cover;
+}
+
+.background-placeholder{
+    background: url("/static/img/placeholder-wide.png") no-repeat fixed center center/cover;
+}
+
+.auth-container{
+    margin-top: 7.5rem;
+    margin-bottom: 7.5rem;
+}
+
+.card-hover{
+    transition: all 0.2s ease-in-out;
+}
+
+.card-hover:hover{
+    transform: scale(var(--card-hover-zoom));
+    box-shadow: 5px 5px 15px var(--main-color);
+}
+
+.custom-img-overlay{
+    color: black;
+    transition: all 0.2s ease-in-out;
+    overflow:hidden;
+}
+
+.custom-img-overlay:hover{
+    transform: scale(var(--card-hover-zoom));
+    box-shadow: 5px 5px 15px var(--main-color);
+    color: white;
+}
+
+.custom-img-overlay:hover .card-img{
+    opacity: 0.1;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.custom-img-overlay .card-img{
+    width: 100%;
+    object-fit: cover;
+    height: 10rem;
+}
+
+.navbar-custom{
+    margin-bottom: 1rem;
+}
+
+.navbar-custom .container{
+    background-color: rgba(46, 31, 83, 0.788);
+    padding: 0.75rem;
+}   
+
+.navbar-custom .navbar-nav .nav-link{
+    color: white!important;
+}
+.navbar-custom .navbar-brand{
+    color: white!important;
+}
+
+.navbar-custom .nav-item{
+    padding: 0 0.5rem 0 0.5rem;
+    transition: all 0.2s ease-in-out;
+    border-radius: 5px;
+}
+
+.nav-item:hover{
+    background-color: var(--main-hover-color);
+}
+
+.nav-item:hover .nav-link{
+    color: white!important;
+}
+
+.article-subtitle{
+    background-color: var(--main-color);
+    border-radius: 5px;
+    padding: 10px;
+    font-style: italic;
+}
+
+.article-topic{
+    margin-top: 1rem;
+}
+
+.article-paragraph{
+    margin-top: 2.5rem;
+}
+
+.article-paragraph h3{
+    font-weight: normal;
+}
+
+.paragraph-image{
+    max-width: 300px;
+    max-height: 300px;
+}
+
+.article-subtitle p{
+    margin-top: 0!important;
+    margin-bottom: 0!important;
+}
+
+.footer{
+    margin-top: 5rem;
+}
+
+.footer .container{
+    border-top: 1px solid var(--main-color);
+}
+
+.footer .row{
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+}
+
+
+.related-lessons{ 
+    margin-top: 5rem;
+}
+
+
+@media (max-width: 992px) {
+    .similar-articles{
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--main-color);
+    }
+    .placeholder-lesson{
+        margin-top: 2.5rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .similar-articles{
+        border-left: 1px solid var(--main-color);
+    }
+}
+
+@media (max-width: 576px){
+    .search-form{
+        margin-bottom: 0;
+        margin-right: 5px;
+    }
+    .article-image{
+        margin-bottom: 1rem;    
+    }
+}
+
+#error-container{
+    margin-top: 5rem;
+}
+
+.modal.custom .modal-body{
+    color: black;
+} 
+
+.modal.custom .modal-body .text-muted{
+    color: black!important;
+}
+
+.modal.custom .modal-content{
+    border: none;
+}
+
+.modal.custom .modal-header{
+    background-color: var(--main-color);
+}
+
+.modal.custom .modal-footer{
+    background-color: var(--main-color);
+}
+
+.search-results{
+    height: 30rem;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.search-results::-webkit-scrollbar{
+    width: 0;
+}
+
+.article-topics{
+    background-color: var(--main-color);
+    box-shadow: 0px 5px 15px 0px var(--main-color);
+    top: 10rem;
+    z-index: 999!important;
+}
+
+.card{
+    background-color:var(--main-color);
+}
+
+.card .card-subtitle{
+    color: white!important;
+}
+
+.text-muted{
+    color: white!important;
+}
+
+.article-card img{
+    max-width: 200px;
+}
+
+.featured-item{
+    background-color: var(--main-color);
+}
+
+.nav-search {
+    gap: 10px;
+}
+.nav-search .form-group{
+    margin-bottom: 0!important;
+}
+
+.custom-pagination .page-link{
+    background-color: var(--main-color);
+    color: white;
+    border: none;
+    transition: 0.2s all ease-in-out;
+    box-shadow: 0px 5px 15px 0px var(--main-color);
+}
+
+.custom-pagination .page-link:hover{
+    background-color: var(--main-hover-color);
+}
+
+.custom-pagination .page-item.disabled .page-link{
+    background-color: var(--main-color);
+    color: rgb(155, 155, 155);
+}

@@ -1,0 +1,40 @@
+<!-- The main article macro that creates an article card that is shown in index and news pages -->
+{% macro article_card(article, class, style) %}
+    <div class="article-card card {{ class|safe if class }}" style='{{ style|safe }}'>
+        <div class="row card-body">
+            <!-- need to check if image exists first -->
+            {% if article.image_url %}
+                <div class="col-sm-6 col-md-auto col-lg-auto d-flex justify-content-center align-items-center">
+                    <img src="{{ article.image_url }}" class="article-image">
+                </div>
+            {% endif %}
+
+            <div class="col">
+                <h5 class="card-title">{{ article.title|safe }}</h1>
+                <div class="card-subtitle text-muted">
+                    <span class="badge badge-secondary mr-1">{{ article.topic }}</span>
+                    <span><i class="bi-clipboard mr-1"></i>{{ article.author }}</span>
+                    <span><i class="bi-calendar ml-1 mr-1"></i>{{ article.date_posted.strftime('%d/%m/%Y %H:%M') }} </span>
+                </div>
+                <p class="card-text">
+                    {{ article.summary }}
+                </p>
+                <a class="stretched-link" href="{{ url_for('news.article', article_id=article.id) }}">Read more...</a>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+<!-- Smaller version of the main article above. Does not show any images.  -->
+{% macro article_card_small(article, class, style) %}
+    <div class="card {{ class|safe if class }}" style="{{ style|safe if style }}">
+        <div class="card-body">
+            <h5 class="card-title">{{ article.title }}</h5>
+            <small class="text-muted"><i class="bi-calendar mr-1"></i>{{ article.date_posted.strftime('%d/%m/%Y %H:%M') }}</small>
+            <p class="card-text mt-2">
+                {{ article.summary }} 
+            </p>
+            <a href="{{ url_for('news.article', article_id=article.id) }}" class="stretched-link">Read more...</a>
+        </div>
+    </div>
+{% endmacro %}

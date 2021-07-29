@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% from './macros/_generic.html' import view_error_messages with context %}
+
+{% block head %}
+    <title>Login</title>
+{% endblock head %}
+
+
+{% block content %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {{ view_error_messages(messages) }}
+        {% endif %}
+    {% endwith %}
+
+    <div class="container auth-container">
+        <div class="mx-auto text-center" style="max-width: 500px">
+            <h2 class="display-4">Login</h2>
+            <p>Welcome to the Project2021!</p>
+            <p>This is still a work in progress.</p>
+
+            <form method="POST">
+                {{ form.csrf_token }}
+                <div class="form-group">
+                    {{ form.username(class="form-control", placeholder="User name") }}
+                </div>
+                    <div class="form-group">
+                    {{ form.password(class="form-control", placeholder="Password") }}
+                    </div>
+                <button type="submit" class="btn btn-primary" style="min-width: 100%">Login</button>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

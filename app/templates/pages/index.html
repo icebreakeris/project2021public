@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% from './macros/_article.html' import article_card with context %}
+{% from './macros/_generic.html' import view_error_messages with context %}
+
+{% from "./macros/_lessons.html" import lesson_card with context %}
+
+{% block head %}
+    <title>Home</title>
+{% endblock head %}
+
+{% block content %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {{ view_error_messages(messages) }}
+        {% endif %}
+    {% endwith %}
+
+    <div class="page-intro">
+        <div class="jumbotron jumbotron-fluid background-1">
+            <div class="container">
+                <h1 class="display-4">Project2021</h1>
+                <p class="lead">
+                    The use of technology rises day by day, with the most recent events forcing many to work from home, the need of cyber security knowledge increases exponentially.
+                    This project's aim is to raise awareness of the most common cyber security related issues and provide with tips and tricks on how these issues can be avoided and ensure your safety online.
+                </p>
+            </div>
+        </div>
+
+        <div class="jumbotron jumbotron-fluid background-2">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 text-white">
+                        <h1 class="display-4">Stay secure!</h1>
+                        <p class="lead">Being smart and secure online, prevents you and your family from being targeted by the vicious online attackers, who's only task is to steal your information. This platform provides you with the best tips and techniques of staying secure online in the form of lessons!</p>
+                    </div>
+                    <div class="col d-flex placeholder-lesson align-items-center">
+                        <div class="card card-hover"">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ placeholder_lesson.title }}</h5>
+                                <p class="card-subtitle mb-2 text-muted"><span class='badge badge-secondary'>{{ placeholder_lesson.topic }}</span></p>
+                                <p class="card-text">{{ placeholder_lesson.summary }}</p>
+                            </div>
+                            <div class="card-footer">
+                                <p class="card-text d-flex align-items-center justify-content-between">
+                                    Complete! ✅
+                                    <a class="btn btn-primary stretched-link" href="#" role="button">View</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+
+        <div class="jumbotron jumbotron-fluid background-3 text-white">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 badges-preview d-flex flex-wrap justify-content-center align-items-center">
+                        <img src="{{ url_for('static', filename='img/lessons/1/badge.png') }}"/>
+                        <img src="{{ url_for('static', filename='img/lessons/2/badge.png') }}"/>
+                        <img src="{{ url_for('static', filename='img/lessons/3/badge.png') }}"/>
+                    </div>
+                    <div class="col">
+                        <h1 class="display-4">Earn badges!</h1>
+                        <p class="lead">Completing certain lessons will grant you with a badge that show your knowledge in the specific topic. Show these off to your friends or family and make sure they are aware of their security online!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container mt-2">
+        <div class="row">
+            <div class="col-lg-8 news-column">
+                <h1 class="font-weight-light mt-4 mb-4" id="news">News</h1>
+                {% if articles %}
+                    {% for article in articles %}
+                        {{ article_card(article, "card-hover mb-4", "") }}
+                    {% endfor %}
+                {% else %}
+                    <h3 class="font-weight-light">No articles found.</h3>
+                {% endif %}
+            </div>
+            <div class="col">
+                <h1 class="font-weight-light mt-4 mb-4">Lessons</h1>
+                {% if lessons %}
+                    {% for lesson in lessons %}
+                        {{ lesson_card(lesson, 'card-hover mb-4', "") }}
+                    {% endfor %}
+                {% else %}
+                    <h3 class="font-weight-light">No lessons found.</h3>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% from './macros/_lessons.html' import lesson_card with context %}
+
+{% block head %}
+    <title>Lessons</title>
+{% endblock head %}
+
+
+{% block content %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {{ view_error_messages(messages) }}
+        {% endif %}
+    {% endwith %}
+    
+    <div class="container">
+
+        {% if featured_lesson %}
+            <div class="row">
+                <div class="container jumbotron featured-item shadow">
+                    <h2 class="font-weight-normal">Featured lesson</h2>
+                    <h3 class="font-weight-light">{{ featured_lesson.title }}<span class="ml-3 badge badge-primary">{{ featured_lesson.topic }}</h3>
+                    <p class="lead">{{ featured_lesson.summary }}</p>
+                    <a class="btn btn-primary float-right" href="{{ url_for('lessons.lesson', lesson_id=featured_lesson.id) }}" role="button">View</a>
+                </div>
+            </div>
+        {% endif %}
+        
+
+        <div class="row">
+            {% if preferred_lessons or lessons %}
+                {% if preferred_lessons %}
+                    <h1 class="font-weight-light mt-4 mb-4 ml-3">Your topics of interest</h1>
+                    <div class="custom-accordion rounded shadow" id="accordion">
+                        {% for preference in preferences %}
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-{{ preference|format_name }}" aria-expanded="true" aria-controls="collapse-{{ preference|format_name }}">
+                                        {{ preference }}
+                                    </button>
+                                </h5>
+                            </div>
+                            <div id="collapse-{{ preference|format_name }}" class="collapse" aria-labelledby="heading-{{ preference|format_name }}" data-parent="#accordion">
+                                <div class="card-body lesson-container">
+                                    {% for lesson in preferred_lessons %}
+                                        {% if preference == lesson.topic %}
+                                            {{ lesson_card(lesson, "mb-4", "width: 100%") }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <h1 class="mt-4 mb-4 ml-3 font-weight-light">Other lessons {{ lessons|length }}</h1>
+                {% else %}
+                    <h1 class="font-weight-light mt-4 mb-4 ml-3">Lessons {{ lessons|length }}</h1>
+                {% endif %}
+                <div class="lesson-container d-flex flex-wrap justify-content-sm-around justify-content-md-around">
+                    {% for lesson in lessons %}
+                        {{ lesson_card(lesson, "mb-4", "width: 100%") }}
+                    {% endfor %}
+                </div>    
+            {% else %}
+                <h3 class="font-weight-light">No lessons found.</h3>
+            {% endif %}
+            
+        </div>
+
+        {% if current_user.is_authenticated %}
+            {% if preferences|length < 1 and not session["remember-preference-modal"] and lessons|length > 0 %}
+                <div class="modal custom fade" id="preference-modal" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Preferences</h5>
+                            </div>
+                            <div class="modal-body">
+                                <p>Looks like you don't have any lesson preferences set up yet!</p>
+                                <p>Would you like to go to the profile or stay?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" id="stay-button" data-dismiss="modal">Stay</button>
+                                <a href="{{ url_for('profile.profile') }}" class="btn btn-outline-primary" role="button">Go to profile</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    $('#preference-modal').modal("show");
+                </script>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock content %}

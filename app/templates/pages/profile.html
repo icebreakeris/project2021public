@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+
+{% from './macros/_generic.html' import view_error_messages with context %}
+{% from './macros/_lessons.html' import lesson_progress with context %}
+
+{% block head %}
+    <title>Profile</title>
+{% endblock head %}
+
+
+{% block content %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {{ view_error_messages(messages) }}
+        {% endif %}
+    {% endwith %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1 class="mb-4 mt-4 font-weight-light">Your profile</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="card mb-4" style="width: 100%">
+                <div class="card-body">
+                    <h5 class="card-title">Current details</h5>
+                    <div class="card-text">
+                        <div class="row mt-4">
+                            <div class="col-lg-6">
+                                <div class="mb-4">
+                                    <h6 class="font-weight-normal">Current username</h6>
+                                    <input type="text" class="form-control" value="{{ current_user.username }}" readonly>
+                                </div>
+                                <div class="mb-4">
+                                    <h6 class="font-weight-normal">Current E-mail</h6>
+                                    <input type="text" class="form-control" value="{{ current_user.email }}" readonly>
+                                </div>
+                                <div class="mb-4">
+                                    <h6 class="font-weight-normal">Registration date</h6>
+                                    <input type="text" class="form-control" value="{{ current_user.registered.strftime('%d/%m/%Y %H:%M') }}" readonly>
+                                </div>
+                                <div class="mb-4">
+                                    <h6 class="font-weight-normal">Last logged in</h6>
+                                    <input type="text" class="form-control" value="{{ current_user.last_login.strftime('%d/%m/%Y %H:%M') }}" readonly>
+                                </div>
+                                <div class="mb-4 text-center">
+                                    <button type="button" class="btn btn-outline-danger rounded" data-toggle="modal" data-target="#delete-account-modal">
+                                        Delete account
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="btn-group-vertical mt-4" style="gap: 20px; width: 100%">
+                                    <button type="button" class="btn btn-primary rounded" data-toggle="modal" data-target="#change-username-modal">
+                                        Change your username
+                                    </button>
+                                    <button type="button" class="btn btn-primary rounded" data-toggle="modal" data-target="#change-email-modal">
+                                        Change your email
+                                    </button>
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#change-password-modal">
+                                        Change your password
+                                    </button>
+                                </div>
+    
+                                <div class="mt-4">
+                                    <h5 class="font-weight-normal">Lesson topic preferences</h5>
+                                    <form method="POST">
+                                        {{ news_checkbox.csrf_token }}
+                                        <div class="form-group">
+                                            {% for checkbox in news_checkbox.checkboxes %}
+                                                <div class="form-check form-check-inline">
+                                                    {{ checkbox(class="form-check-input", checked=checkbox.label.text in preferences )}}
+                                                    {{ checkbox.label(class="form-check-label") }}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                        <button type="submit" class="btn btn-primary" style="width: 100%">Update</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="card mb-4" style="width: 100%">
+                <div class="card-body"> 
+                    <h5 class="card-title">Badges</h5>
+                    {% if badges %} 
+                        <div class="card-text mt-4 d-flex flex-wrap justify-content-center align-items-center" style="gap: 20px">
+                            {% for badge in badges %}
+                                <figure class="text-center">
+                                    <img src="{{ badges[badge]['badge_url'] }}" style="max-width: 100px">
+                                    <figcaption>{{ badges[badge]["badge_name"] }}</figcaption>
+                                </figure>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="card-text mt-4">
+                            <h6 class="font-weight-normal">No badges earned! Complete a lesson to earn one!</h6>
+                        </div>
+                    {% endif %} 
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="card mb-4" style="width: 100%">
+                <div class="card-body"> 
+                    <h5 class="card-title">Lesson progress</h5>
+                    <div class="card-text">
+                        {% if session["progress"].lessons %}
+                            <div class="mt-4">
+                                {% for lesson_id in session["progress"].lessons %}
+                                    {% if not session["progress"].lessons[lesson_id].complete %}
+                                        {{ lesson_progress(lesson_id, true, true, "mb-4", "") }}
+                                    {% endif %}
+                                {% endfor %}
+                                {% if complete_lessons %}
+                                    <div class="mt-4">
+                                        <div class="custom-accordion rounded shadow" id="accordion" style="background-color: var(--main-color-ligher)">
+                                            <div class="card-header">
+                                                <h5 class="mb-0">
+                                                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-history" aria-expanded="true" aria-controls="collapse-history">
+                                                        Lesson history
+                                                    </button>
+                                                </h5>
+                                            </div>
+                                            <div id="collapse-history" class="collapse" aria-labelledby="heading-history" data-parent="#accordion">
+                                                <div class="card-body lesson-container">
+                                                    {% for lesson_id in complete_lessons %}
+                                                        {{ lesson_progress(lesson_id, true, true, "mb-4", "") }}
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="mt-4">
+                                No lesson progression saved! Have a look at the <a href="{{ url_for('lessons.lessons') }}">lessons</a> page and try some!
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal custom fade" id="change-email-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h6 class="modal-title font-weight-normal">Change your email</h6>
+                    </div>
+                    <form method="POST">
+                        <div class="modal-body">
+                            <h6 class="font-weight-normal">Current email</h6>
+                            <input class="form-control" type="text" placeholder="{{ current_user.email }}" readonly>
+                            
+                            {{ email_form.csrf_token }}
+                            <div class="form-group">
+                                <h6 class="font-weight-normal mt-3">New email</h6>
+                                {{ email_form.email(class="form-control", placeholder="New email")}}
+                            </div>    
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-outline-primary">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal custom fade" id="change-password-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title font-weight-normal">Change your password</h5>
+                    </div>
+                    <form method="POST">
+                        <div class="modal-body">
+                            {{ password_form.csrf_token }}
+                            <div class="form-group">
+                                
+                                <div class="form-group">
+                                    <h6 class="font-weight-normal">Current password</h6>
+                                    {{ password_form.current_password(class="form-control", placeholder="Current Password") }}
+                                </div>
+                                <div class="form-group">
+                                    <h6 class="font-weight-normal mt-3">New password</h6>
+                                    {{ password_form.password(class="form-control", placeholder="Password") }}
+                                </div>
+                                <small class="form-text text-muted">
+                                    The password should have: 
+                                    <ul>
+                                        <li>
+                                            At least 7 characters
+                                        </li>
+                                        <li>
+                                            1 upper case letter (A-Z)
+                                        </li>
+                                        <li>
+                                            1 lower case letter (a-z)
+                                        </li>
+                                        <li>
+                                            1 number (0-9)
+                                        </li>
+                                        <li>
+                                            1 special character (!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~)
+                                        </li>
+                                    </ul>
+                                </small>
+                                <div class="form-group">
+                                    <h6 class="font-weight-normal mt-3">Repeat new password</h6>
+                                    {{ password_form.repeat(class="form-control", placeholder="Repeat password") }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-outline-primary">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal custom fade" id="change-username-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h6 class="modal-title font-weight-normal">Change your username</h6>
+                    </div>
+                    <form method="POST">
+                        <div class="modal-body">
+                            <h6 class="font-weight-normal">Current username</h6>
+                            <input class="form-control" type="text" placeholder="{{ current_user.username }}" readonly>
+                            
+                            {{ username_form.csrf_token }}
+                            <div class="form-group">
+                                <h6 class="font-weight-normal mt-3">New username</h6>
+                                {{ username_form.username(class="form-control", placeholder="New username")}}
+                            </div>    
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-outline-primary">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal custom fade" id="delete-account-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h6 class="modal-title font-weight-normal">Delete your account</h6>
+                    </div>
+                    <form method="POST">
+                        <div class="modal-body">
+                            {{ delete_account_form.csrf_token }}
+                            <div class="form-group">
+                                <h6 class="font-weight-normal mt-3">Please enter "{{ confirmation_string }}" to delete your account.</h6>
+                                {{ delete_account_form.confirmation_field(class="form-control", placeholder=confirmation_string)}}
+                            </div>    
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        {% if current_user.is_admin %} 
+            <div class="row">
+                <div class="mt-4">
+                    <h3>DEBUG</h3>
+                    <form action="debug/populate_lessons" method="POST">
+                        <p>Current lesson count: {{ lesson_count }}</p>
+                        <button class="btn btn-primary">Populate Lessons</button>
+                    </form>
+                    <form action="debug/populate_articles" method="POST">
+                        <p>Current article count: {{ article_count }}</p>
+                        <button class="btn btn-primary">Populate Articles</button>
+                    </form>
+                    <div class="row">
+                        <div class="col">
+                            <h6>Debug row</h6>
+                            <p>
+                                is_admin: {{ current_user.is_admin }}
+                            </p>
+                            <p>
+                                is_editor: {{ current_user.is_editor }}
+                            </p>
+                            <p>
+                                preferences: {{ current_user.preferences }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        
+    </div>
+{% endblock content %}

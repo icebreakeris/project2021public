@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% from './macros/_lessons.html' import lesson_card with context %}
+
+{% block head %}
+    <title>{{ lesson.title }}</title>
+{% endblock head %}
+
+{% block content %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {{ view_error_messages(messages) }}
+        {% endif %}
+    {% endwith %}
+    
+    <div class="container">
+        <div class="article-top">
+            <div class="article-title">
+                <h1 class="font-weight-light">{{ lesson.title }}</h1>
+                <div class="article-details mb-3">
+                    <span></i>Author: {{ lesson.author }}</span>
+                </div>
+            </div>
+            <div class="article-subtitle text-justify">
+                <p>{{ lesson.summary }}</p>
+            </div>
+            <div class="article-topic">
+                <p class="lead">Topic: <span class="badge badge-secondary">{{ lesson.topic }}</span></p>
+            </div>
+        </div>
+        <div class="article-content">
+            {{ content["html"]|safe }}
+        </div>
+        
+        <div class="mt-4">
+            {% if questions %}
+                <h3 class="font-weight-normal mb-4">Lesson quiz</h3>
+                {% if lesson.id|string not in badges %}
+                    <form method="POST" action="" id="questions-form">
+                        {% for question in questions %}
+                            <h5 class="font-weight-normal mb-4">{{ questions[question]["value"] }}</h5>
+                            {% set name = question %}
+                            <select class="form-control mb-4" name="{{ name }}" required>
+                                <option value="">Select an answer</option>
+                                {% for answer in questions[question]["answers"] %}
+                                    <option value="{{ answer }}">{{ questions[question]["answers"][answer]["value"] }}</option>
+                                {% endfor %}
+                            </select>
+                            <h6 class="font-weight-normal question-answer rounded shadow" id="{{ name }}_answer"></h6>
+                        {% endfor %}
+                        <button class="btn btn-primary mt-3" type="submit" id="questions-form-submit">Submit</button>
+                    </form>
+                    
+                    <script>
+                        $("#questions-form").submit(function(e){
+                            e.preventDefault();
+
+                            const csrftoken = "{{ csrf_token() }}";
+                            const form = $(this);
+                            const submit = $("#questions-form-submit");
+                            const total_questions = "{{ questions|length }}";
+                            let total_correct = 0;
+
+                            $.ajax({
+                                type:"POST",
+                                url:form.attr("action"),
+                                data:form.serialize(),
+                                beforeSend: function(xhr, settings) {
+                                    if (!/^(GET|HEAD    |OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                                        xhr.setRequestHeader("X-CSRFToken", csrftoken)
+                                    }
+                                },
+                                success: function(data){
+                                    submit.addClass("disabled");
+                                    submit.prop("disabled", true);
+                                    if(data){
+                                        data=JSON.parse(data);
+                                        Object.entries(data).forEach(([key, value]) =>{
+                                            if(value){
+                                                $("#"+key+"_answer").text("Correct! ✅").css({
+                                                    "display":"block",
+                                                    "color":"green"
+                                                });
+                                                total_correct += 1;
+                                            }else{
+                                                $("#"+key+"_answer").text("Incorrect! ❌").css({
+                                                    "display":"block",
+                                                    "color":"red"
+                                                });
+                                            }
+
+                                            if(total_questions == total_correct){
+                                                $("#lesson-complete-modal").modal("show");
+                                            }
+                                        })
+                                    }
+                                },
+                                error: function(error){
+                                    if(submit.prop("disabled")){
+                                        submit.prop("disabled", false);
+                                    }
+                                }
+                            });
+                        })
+                    </script>
+                {% else %}
+                    <h5 class="font-weight-normal">Lesson complete! ✅</h5>
+                {% endif %}
+            {% else %}
+                {% if current_user.is_authenticated %}
+                    <h5 class="font-weight-normal">There are no questions for this lesson!</h5>
+                {% else %}
+                    <h5 class="font-weight-normal">Login or create an account to attempt a quiz about this lesson!</h5>
+                {% endif %}
+            {% endif %} 
+        </div>
+    </div>
+
+    <div class="modal custom fade" id="lesson-complete-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title font-weight-normal">Congratulations!</h6>
+                </div>
+                <div class="modal-body">
+                    {% if next_lesson %}
+                        <div class="row">
+                            <div class="col text-center">
+                                <h5 class="font-weight-normal">Lesson Complete!</h5>
+                                <img class="mt-4" src="{{ badge_url }}" style="max-width: 100px">
+                                <h5 class="font-weight-normal mt-4">You have earned <b>{{ badge }}</b>!</h5> 
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <h5 class="font-weight-normal mt-4">Next lesson:</h5>
+                                {{ lesson_card(next_lesson, "mt-4", "color: white!important") }}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="row">
+                            <div class="col text-center">
+                                <h5 class="font-weight-normal">Lesson Complete!</h5>
+                                <img class="mt-4" src="{{ badge_url }}" style="max-width: 100px">
+                                <h5 class="font-weight-normal mt-4">You have earned <b>{{ badge }}</b>!</h5> 
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-outline-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+{% endblock content %}

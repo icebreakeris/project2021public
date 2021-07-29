@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block head %}
+    <title>Error</title>
+{% endblock head %}
+
+
+{% block content %}
+    <div class="container d-flex align-items-center" id="error-container">
+        <div>
+            <h1 class="display-4">Error!</h1>
+            <h4>Description</h4>
+            <p>{{ error }}</p>
+        </div>
+        <i class="bi bi-exclamation-triangle ml-auto" style="font-size: 15rem;"></i>
+    </div>
+{% endblock content %}
